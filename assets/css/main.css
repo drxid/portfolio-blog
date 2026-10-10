@@ -1,0 +1,239 @@
+@import './themes.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Отступ под якоря */
+  :target {
+    scroll-margin-top: 5rem;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  ::selection {
+    background: var(--accent-from);
+    color: #fff;
+  }
+
+  /* Серифный режим (тумблер в настройках). Моно-элементы (.font-mono/.font-brand) не трогаем */
+  html.serif body {
+    font-family: 'Lora', Georgia, 'Times New Roman', serif;
+  }
+
+  /* Аккуратный скроллбар */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
+
+@layer components {
+  .container-content {
+    @apply mx-auto w-full max-w-wide px-5 sm:px-8;
+  }
+
+  /* Бренд / моно-акцент */
+  .font-brand {
+    @apply font-mono font-bold tracking-tight;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(100deg, var(--accent-from), var(--accent-to));
+  }
+
+  /* Иконочная кнопка в пунктирной рамке (тема/настройки) */
+  .btn-dashed {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-lg border border-dashed border-border text-fg;
+    transition: border-color 0.2s, transform 0.2s, background-color 0.2s;
+  }
+  .btn-dashed:hover {
+    @apply border-solid bg-card;
+    transform: translateY(-1px);
+  }
+  .btn-dashed:active {
+    transform: translateY(0);
+  }
+
+  /* Навигационная ссылка с ↗ */
+  .nav-link {
+    @apply relative inline-flex items-start gap-0.5 text-base text-fg;
+  }
+  .nav-link .arrow {
+    @apply text-xs text-muted transition-transform duration-200;
+  }
+  .nav-link:hover .arrow {
+    transform: translate(2px, -2px);
+    color: var(--accent-to);
+  }
+  .nav-link::after {
+    content: '';
+    @apply absolute -bottom-0.5 left-0 h-px w-0 bg-fg transition-all duration-300;
+  }
+  .nav-link:hover::after {
+    @apply w-[calc(100%-0.6rem)];
+  }
+
+  /* Текстовая ссылка-«читать» со стрелкой */
+  .read-link {
+    @apply inline-flex items-center gap-1.5 text-sm text-muted transition-colors;
+  }
+  .read-link .arrow {
+    @apply transition-transform duration-200;
+  }
+  .group:hover .read-link,
+  .read-link:hover {
+    color: var(--accent-to);
+  }
+  .group:hover .read-link .arrow,
+  .read-link:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded-md border border-border bg-card px-2 py-0.5 text-xs text-muted;
+  }
+
+  .divider-dashed {
+    @apply border-0 border-t border-dashed border-border;
+  }
+
+  /* Типографика тела статьи */
+  .prose-article {
+    @apply text-[1.05rem] leading-[1.75];
+  }
+  .prose-article > * + * {
+    @apply mt-5;
+  }
+  .prose-article h2 {
+    @apply mt-12 mb-3 scroll-mt-24 text-2xl font-semibold tracking-tight;
+  }
+  .prose-article h3 {
+    @apply mt-9 mb-2 scroll-mt-24 text-xl font-semibold tracking-tight;
+  }
+  /* Авто-якоря заголовков наследуют цвет текста, а не цвет ссылок */
+  .prose-article h2 a,
+  .prose-article h3 a {
+    @apply font-semibold no-underline;
+    color: inherit;
+  }
+  .prose-article h2 a:hover,
+  .prose-article h3 a:hover {
+    color: var(--accent-to);
+  }
+  .prose-article p {
+    @apply text-fg/90;
+  }
+  .prose-article a {
+    @apply underline decoration-border underline-offset-4 transition-colors hover:decoration-[var(--accent-to)];
+    color: var(--accent-to);
+  }
+  .prose-article ul {
+    @apply list-disc space-y-1.5 pl-6;
+  }
+  .prose-article ol {
+    @apply list-decimal space-y-1.5 pl-6;
+  }
+  .prose-article blockquote {
+    @apply border-l-2 border-[var(--accent-from)] pl-4 italic text-muted;
+  }
+  .prose-article code {
+    @apply rounded bg-card px-1.5 py-0.5 font-mono text-[0.9em];
+  }
+  .prose-article pre {
+    @apply overflow-x-auto rounded-xl border border-border bg-card p-4 text-sm;
+  }
+  .prose-article pre code {
+    @apply bg-transparent p-0;
+  }
+  .prose-article img {
+    @apply rounded-xl border border-border;
+  }
+  .prose-article hr {
+    @apply my-10 divider-dashed;
+  }
+}
+
+/* ---------- Анимации ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Вход элементов: backwards-fill прячет до старта — без вспышки даже при SSR */
+  .anim {
+    animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .anim-fade {
+    animation: fade-in 0.7s ease both;
+  }
+
+  /* Переходы между страницами */
+  .page-enter-active,
+  .page-leave-active {
+    transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .page-enter-from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  .page-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  /* Анимация списков (фильтрация/сортировка) */
+  .list-move,
+  .list-enter-active,
+  .list-leave-active {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .list-enter-from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .list-leave-to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  .list-leave-active {
+    position: absolute;
+    width: 100%;
+  }
+
+  /* Плавная смена темы через View Transitions */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.35s;
+  }
+}

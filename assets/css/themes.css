@@ -1,0 +1,38 @@
+/* Токены тем. color-mode ставит класс на <html>: .light / .dark / .gruvbox
+   --bg и --fg хранятся как RGB-триплеты (для tailwind alpha: text-fg/90).
+   Остальные токены — готовые цвета (используются как var() напрямую). */
+
+:root,
+.light {
+  color-scheme: light;
+  --bg: 255 255 255;
+  --fg: 26 26 26;
+  --muted: #6b7280;
+  --card: #f6f7f9;
+  --border: #e5e7eb;
+  --accent-from: #42d392;
+  --accent-to: #5980de;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: 26 26 26;
+  --fg: 243 243 243;
+  --muted: #9aa0a6;
+  --card: #242424;
+  --border: #2f2f2f;
+  --accent-from: #42d392;
+  --accent-to: #5980de;
+}
+
+/* gruvvy — gruvbox-палитра, тёплые тона */
+.gruvbox {
+  color-scheme: dark;
+  --bg: 40 40 40;
+  --fg: 235 219 178;
+  --muted: #a89984;
+  --card: #32302f;
+  --border: #3c3836;
+  --accent-from: #b8bb26; /* зелёный */
+  --accent-to: #fabd2f; /* жёлтый */
+}
