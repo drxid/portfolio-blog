@@ -46,9 +46,7 @@ export const SKILLS: Skill[] = [
   // AI
   { label: 'Claude Code', icon: 'simple-icons:claude', color: '#D97757' },
   { label: 'Cursor', icon: 'simple-icons:cursor', color: ACCENT },
-  { label: 'GitHub Copilot', icon: 'simple-icons:githubcopilot', color: ACCENT },
   { label: 'Anthropic API', icon: 'simple-icons:anthropic', color: '#D97757' },
-  { label: 'OpenAI API', icon: 'simple-icons:openai', color: '#74AA9C' },
   { label: 'AI Agents', icon: 'ph:robot-duotone', color: ACCENT },
   { label: 'MCP', icon: 'ph:graph-duotone', color: ACCENT },
   { label: 'RAG', icon: 'ph:brain-duotone', color: ACCENT },
@@ -56,3 +54,4 @@ export const SKILLS: Skill[] = [
   { label: 'LangChain', icon: 'simple-icons:langchain', color: ACCENT },
   { label: 'n8n', icon: 'simple-icons:n8n', color: '#EA4B71' },
 ]
+

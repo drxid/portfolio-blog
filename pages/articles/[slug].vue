@@ -67,8 +67,8 @@ useHead({
       </aside>
 
       <article class="mx-auto min-w-0 max-w-content flex-1">
-        <NuxtLink to="/articles" class="read-link mb-6">
-          <span class="arrow rotate-180">→</span> Все статьи
+        <NuxtLink to="/articles" class="read-link group mb-6">
+          <Icon name="ph:arrow-left" class="transition-transform duration-200 group-hover:-translate-x-1" /> Все статьи
         </NuxtLink>
 
         <!-- Шапка статьи -->

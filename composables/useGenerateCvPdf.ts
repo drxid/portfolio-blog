@@ -109,10 +109,7 @@ export function useGenerateCvPdf() {
             ? exp.role.replace(exp.tooltipTerm, `${exp.tooltipTerm}*`)
             : exp.role
         text(roleText, { size: 11.5, bold: true, color: 20, gap: 1 })
-        text(
-          `${exp.company}${exp.url ? '  ·  ' + exp.url : ''}`,
-          { size: 10, color: 90, gap: 1 },
-        )
+        text(exp.company, { size: 10, color: 90, gap: 1 })
         text(exp.period, { size: 9, color: 130, gap: 4 })
         text(exp.summary, { gap: 3 })
         exp.highlights.forEach((h) => text(`•  ${h}`, { indent: 10, gap: 1 }))
@@ -124,7 +121,7 @@ export function useGenerateCvPdf() {
 
       // Навыки
       sectionTitle('Ключевые навыки')
-      ;[...cv.skills, ...cv.extraSkills].forEach((g) => {
+      cv.skills.forEach((g) => {
         text(`${g.label}: ${g.items.join(', ')}`, { gap: 3 })
       })
 

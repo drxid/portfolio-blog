@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const nav = [
+  { to: '/projects', label: 'Проекты' },
   { to: '/articles', label: 'Статьи' },
   { to: '/checklist', label: 'Чеклист' },
 ]
@@ -29,7 +30,7 @@ const socials = [
     <div class="flex flex-col gap-3 sm:items-end">
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
         <NuxtLink v-for="item in nav" :key="item.to" :to="item.to" class="nav-link">
-          {{ item.label }}<span class="arrow">↗</span>
+          {{ item.label }}<Icon name="ph:arrow-up-right-bold" class="arrow" />
         </NuxtLink>
         <div class="flex items-center gap-2">
           <ThemeToggle />

@@ -69,12 +69,12 @@
     transform: translateY(0);
   }
 
-  /* Навигационная ссылка с ↗ */
+  /* Навигационная ссылка со стрелкой-иконкой */
   .nav-link {
     @apply relative inline-flex items-start gap-0.5 text-base text-fg;
   }
   .nav-link .arrow {
-    @apply text-xs text-muted transition-transform duration-200;
+    @apply mt-0.5 shrink-0 text-xs text-muted transition-transform duration-200;
   }
   .nav-link:hover .arrow {
     transform: translate(2px, -2px);
@@ -196,6 +196,19 @@
   }
   .anim-fade {
     animation: fade-in 0.7s ease both;
+  }
+
+  /* Подсветка пункта опыта после перехода из таймлайна на /cv */
+  @keyframes exp-flash {
+    from {
+      background-color: var(--card);
+    }
+    to {
+      background-color: transparent;
+    }
+  }
+  .exp-flash {
+    animation: exp-flash 1.6s ease-out 0.3s both;
   }
 
   /* Переходы между страницами */

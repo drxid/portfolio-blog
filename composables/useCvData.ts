@@ -6,6 +6,11 @@ export interface CvExperience {
   company: string
   url?: string
   period: string
+  // Даты для таймлайна (YYYY-MM); без end — работаю по настоящее время
+  start: string
+  end?: string
+  // Личный проект, а не найм — показывается последним, отдельно от остального опыта
+  personal?: boolean
   summary: string
   highlights: string[]
   stack: string[]
@@ -31,8 +36,22 @@ export interface CvData {
   languages: { name: string; level: string }[]
   education: { place: string; faculty: string; period: string }[]
   skills: CvSkillGroup[]
-  extraSkills: CvSkillGroup[]
   experience: CvExperience[]
+}
+
+// Приватный опыт из private/experience.ts (файл в .gitignore). Через glob,
+// чтобы сборка без этого файла — например, из публичного репозитория — не падала.
+const privateModules = import.meta.glob<{ default: CvExperience[] }>('../private/experience.ts', {
+  eager: true,
+})
+const privateExperience = Object.values(privateModules).flatMap((m) => m.default)
+
+// Порядок опыта: найм перед личными проектами, затем текущие места работы,
+// внутри групп — от нового к старому
+function byRecency(a: CvExperience, b: CvExperience) {
+  if (!a.personal !== !b.personal) return a.personal ? 1 : -1
+  if (!a.end !== !b.end) return a.end ? 1 : -1
+  return b.start.localeCompare(a.start)
 }
 
 export function useCvData(): CvData {
@@ -63,45 +82,54 @@ export function useCvData(): CvData {
       {
         label: 'Frontend',
         items: [
-          'HTML5',
-          'CSS',
-          'Sass',
-          'SCSS',
-          'JavaScript ES6+',
           'TypeScript',
+          'JavaScript ES6+',
           'Vue 3',
           'Composition API',
-          'Nuxt 3',
-          'Vite',
+          'Nuxt',
           'Pinia',
-          'Vuex',
+          'TanStack Query',
           'Vue Router',
-          'Axios',
+          'VueUse',
+          'Vite',
+          'Tailwind CSS',
+          'SCSS',
+          'shadcn-vue',
+          'Nuxt UI',
+          'i18n',
           'PWA',
+          'Web Audio API',
+          'Vuex',
+          'Axios',
+          'HTML5',
+          'CSS',
         ],
       },
       {
-        label: 'Pet-проекты',
-        items: ['React', 'Svelte'],
-      },
-      {
         label: 'Backend',
-        items: ['Node.js', 'Express', 'REST API', 'JWT Tokens', 'MongoDB', 'Auth'],
+        items: [
+          'Node.js',
+          'Nuxt Server (Nitro)',
+          'Express',
+          'REST API',
+          'WebSocket',
+          'PostgreSQL',
+          'Drizzle ORM',
+          'Prisma',
+          'Redis',
+          'MongoDB',
+          'S3',
+          'OAuth',
+          'JWT',
+          'Zod',
+        ],
       },
-      {
-        label: 'Инструменты и дизайн',
-        items: ['Git', 'Postman', 'Docker', 'CI/CD', 'Figma', 'Adobe soft'],
-      },
-    ],
-    extraSkills: [
       {
         label: 'AI',
         items: [
           'Claude Code',
           'Cursor',
-          'GitHub Copilot',
           'Anthropic API',
-          'OpenAI API',
           'AI Agents',
           'MCP',
           'RAG',
@@ -111,11 +139,24 @@ export function useCvData(): CvData {
         ],
       },
       {
-        label: 'Тестирование',
-        items: ['Playwright'],
+        label: 'Тестирование и качество',
+        items: ['Vitest', 'Playwright', 'Testing Library', 'Storybook', 'ESLint', 'Sentry'],
+      },
+      {
+        label: 'Десктоп',
+        items: ['Tauri 2', 'Rust', 'Svelte 5', 'React'],
+      },
+      {
+        label: 'DevOps и инструменты',
+        items: ['Docker', 'Docker Compose', 'nginx', 'Linux', 'CI/CD', 'Git', 'pnpm', 'Postman'],
+      },
+      {
+        label: 'Дизайн',
+        items: ['Figma', 'Adobe soft'],
       },
     ],
     experience: [
+      ...privateExperience,
       {
         role: 'Frontend JS-разработчик · РЖД (ADT)',
         tooltipTerm: 'ADT',
@@ -123,7 +164,8 @@ export function useCvData(): CvData {
           'Agile Development Team — филиал R&D РЖД. Не общий отдел, а инкубатор новых проектов с современным подходом к разработке.',
         company: 'rzd.ru',
         url: 'https://rzd.ru',
-        period: '2023 — по настоящее время',
+        period: 'Октябрь 2023 — по настоящее время',
+        start: '2023-10',
         summary:
           'Работа над большим портфелем продуктов РЖД — от поддержки и развития существующих сервисов до запуска новых разделов и технического руководства командами.',
         highlights: [
@@ -135,12 +177,16 @@ export function useCvData(): CvData {
         stack: ['Vue 3', 'Nuxt 3', 'TypeScript', 'Pinia', 'WebSockets', 'Drag-and-Drop', 'CI/CD', 'PDF'],
       },
       {
-        role: 'Fullstack JS-разработчик · собственный проект (ИП)',
-        company: 'Playloop.ru',
+        role: 'Основатель и Fullstack-разработчик · Playloop',
+        personal: true,
+        tooltipTerm: 'Основатель',
+        tooltip: 'Собственный коммерческий проект (ИП). Единственный разработчик: идея, продукт, дизайн, фронтенд, бэкенд и инфраструктура.',
+        company: 'playloop.ru',
         url: 'https://playloop.ru',
         period: 'Апрель 2022 — по настоящее время',
+        start: '2022-04',
         summary:
-          'Разработка личного коммерческого проекта «Playloop» — интерактивного PWA-приложения, звукового компаньона, который создаёт погружающее аудио-сопровождение и атмосферу для настольных игр.',
+          'Основал и в одиночку развиваю коммерческий продукт «Playloop» — PWA-приложение, звуковой компаньон, который создаёт погружающее аудио-сопровождение и атмосферу для настольных игр. Отвечаю за всё: идею и развитие продукта, дизайн, фронтенд, бэкенд и инфраструктуру.',
         highlights: [
           'Полностью адаптивный интерфейс — одинаково удобно на компьютере и смартфоне; звук продолжает играть даже при заблокированном экране, поэтому приложением можно пользоваться прямо во время партии.',
           'Глубокое управление музыкой и звуками через браузерный Web Audio API и фоновое воспроизведение создают атмосферное аудио-окружение.',
@@ -163,9 +209,11 @@ export function useCvData(): CvData {
       },
       {
         role: 'Fullstack JS-разработчик · ООО «Спектр»',
-        company: 'Spektrtruck.ru',
+        company: 'spektrtruck.ru',
         url: 'https://spektrtruck.ru',
         period: 'Июль 2021 — Сентябрь 2023',
+        start: '2021-07',
+        end: '2023-09',
         summary:
           'ООО «Спектр» занимается поставкой складской техники мировых брендов на российский рынок и сервисным обслуживанием складского оборудования.',
         highlights: [
@@ -185,6 +233,6 @@ export function useCvData(): CvData {
           'MongoDB',
         ],
       },
-    ],
+    ].sort(byRecency),
   }
 }
