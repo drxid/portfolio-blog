@@ -176,7 +176,6 @@ export function useGenerateCvPdf() {
       sideLine(cv.title, { style: 'italic', size: 11, color: MUTED, align: 'right', after: 8 })
 
       sideLine(cv.email, { align: 'right', url: `mailto:${cv.email}` })
-      sideLine(cv.site, { align: 'right', url: `https://${cv.site}` })
       sideLine(cv.github, { align: 'right', url: `https://${cv.github}` })
       sideLine(cv.telegram, { align: 'right', url: `https://${cv.telegram}` })
       sideLine(cv.location, { align: 'right', color: MUTED })
