@@ -47,6 +47,9 @@ const COL_GAP = 26
 const SIDE_W = 176
 const LEADING = 1.36
 
+// Имя файла и заголовок документа — латиницей, чтобы не ломалось в почте и ATS
+const PDF_TITLE = 'Vadim Bukhlov CV'
+
 export function useGenerateCvPdf() {
   const generating = ref(false)
 
@@ -63,7 +66,7 @@ export function useGenerateCvPdf() {
       doc.addFont('PTSerif-Bold.ttf', 'PTSerif', 'bold')
       doc.addFileToVFS('PTSerif-Italic.ttf', fonts.italic)
       doc.addFont('PTSerif-Italic.ttf', 'PTSerif', 'italic')
-      doc.setProperties({ title: `${cv.name} — резюме`, author: cv.name })
+      doc.setProperties({ title: PDF_TITLE, author: cv.name })
 
       const pageW = doc.internal.pageSize.getWidth()
       const pageH = doc.internal.pageSize.getHeight()
@@ -150,7 +153,8 @@ export function useGenerateCvPdf() {
       ) => {
         const { size = 10, style = 'normal', color = INK, align = 'left', url, after = 0 } = opts
         const lines = wrap(stripEmoji(str), side.w, style, size)
-        font(style, size, url ? LINK : color)
+        // Ссылки в шапке — того же цвета, что и текст
+        font(style, size, color)
         lines.forEach((line) => {
           const w = doc.getTextWidth(line)
           const x = align === 'right' ? right - w : side.x
@@ -287,8 +291,7 @@ export function useGenerateCvPdf() {
         }
       }
 
-      const fileName = `${cv.name.replace(/\s+/g, '_')}_CV.pdf`
-      doc.save(fileName)
+      doc.save(`${PDF_TITLE}.pdf`)
     } finally {
       generating.value = false
     }
