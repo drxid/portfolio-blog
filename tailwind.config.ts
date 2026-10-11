@@ -29,6 +29,7 @@ export default <Partial<Config>>{
       maxWidth: {
         content: '720px',
         wide: '960px',
+        wider: '1140px',
       },
     },
   },

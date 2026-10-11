@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ wide: true })
+
 const cv = useCvData()
 const { generate, generating } = useGenerateCvPdf()
 
@@ -8,8 +10,6 @@ useSeoMeta({
   ogTitle: `${cv.name} — Резюме`,
   ogDescription: `${cv.title}. Опыт, навыки и контакты.`,
 })
-
-const expanded = ref(false)
 
 // Разбивает роль на части, выделяя term для всплывающей подсказки
 function roleParts(exp: (typeof cv.experience)[number]) {
@@ -30,7 +30,7 @@ async function download() {
 </script>
 
 <template>
-  <div class="grid gap-12 lg:grid-cols-[1fr_300px]">
+  <div class="grid gap-12 lg:grid-cols-[1fr_320px]">
     <!-- Основная колонка -->
     <div class="order-2 lg:order-1">
       <!-- О себе -->
@@ -44,31 +44,52 @@ async function download() {
       <!-- Опыт работы -->
       <section class="anim mt-12" style="animation-delay: 80ms">
         <h2 class="text-2xl font-bold tracking-tight">Опыт работы</h2>
-        <div class="mt-6 space-y-10">
-          <article v-for="(exp, i) in cv.experience" :key="i">
-            <h3 class="text-lg font-bold">
-              <template v-for="(part, pi) in roleParts(exp)" :key="pi">
-                <Tooltip v-if="part.tip && exp.tooltip" :text="exp.tooltip">{{ part.text }}</Tooltip>
-                <span v-else>{{ part.text }}</span>
-              </template>
-              <span v-if="exp.company" class="text-muted">| {{ exp.company }}</span>
-            </h3>
-            <span class="tag mt-2">{{ exp.period }}</span>
-            <p class="mt-3 text-fg/90">{{ exp.summary }}</p>
-            <ul class="mt-3 space-y-2">
-              <li
-                v-for="(h, hi) in exp.highlights"
-                :key="hi"
-                class="flex gap-2.5 text-fg/85"
-              >
-                <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-from)]" />
-                <span>{{ h }}</span>
-              </li>
-            </ul>
-            <div class="mt-3 flex flex-wrap gap-1.5">
-              <span v-for="s in exp.stack" :key="s" class="tag">{{ s }}</span>
+        <ExperienceTimeline class="mt-4 rounded-2xl border border-border p-5" />
+        <div class="mt-8 space-y-4">
+          <template v-for="(exp, i) in cv.experience" :key="i">
+            <div
+              v-if="exp.personal && !cv.experience[i - 1]?.personal"
+              class="flex items-center gap-3 pt-4"
+            >
+              <span class="text-xs font-medium uppercase tracking-wider text-muted">Собственный проект</span>
+              <hr class="divider-dashed flex-1" />
             </div>
-          </article>
+            <article :id="experienceId(exp)" class="-mx-4 scroll-mt-6 rounded-2xl px-4 py-3">
+              <header class="flex items-start justify-between gap-4">
+                <div>
+                  <h3 class="text-lg font-bold leading-snug">
+                    <template v-for="(part, pi) in roleParts(exp)" :key="pi">
+                      <Tooltip v-if="part.tip && exp.tooltip" :text="exp.tooltip">{{ part.text }}</Tooltip>
+                      <span v-else>{{ part.text }}</span>
+                    </template>
+                  </h3>
+                  <p class="mt-1 text-sm text-muted">{{ exp.period }}</p>
+                </div>
+                <!-- Сайт компании — иконкой, домен виден в подсказке -->
+                <a
+                  v-if="exp.url"
+                  :href="exp.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :title="exp.company"
+                  :aria-label="`Сайт: ${exp.company}`"
+                  class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border text-muted transition-colors hover:border-[var(--accent-to)] hover:text-[var(--accent-to)]"
+                >
+                  <Icon name="ph:globe-simple" class="h-4 w-4" />
+                </a>
+              </header>
+              <p class="mt-3 text-fg/90">{{ exp.summary }}</p>
+              <ul class="mt-3 space-y-2">
+                <li v-for="(h, hi) in exp.highlights" :key="hi" class="flex gap-2.5 text-fg/85">
+                  <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-from)]" />
+                  <span>{{ h }}</span>
+                </li>
+              </ul>
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                <span v-for="s in exp.stack" :key="s" class="tag">{{ s }}</span>
+              </div>
+            </article>
+          </template>
         </div>
       </section>
 
@@ -95,7 +116,7 @@ async function download() {
 
     <!-- Сайдбар -->
     <aside class="anim order-1 lg:order-2" style="animation-delay: 60ms">
-      <div class="lg:sticky lg:top-8">
+      <div>
         <!-- Аватар + контакты -->
         <div class="flex flex-col items-center text-center lg:items-end lg:text-right">
           <Avatar src="/avatar.jpg" :size="128" />
@@ -139,56 +160,17 @@ async function download() {
         <!-- Скиллы -->
         <div class="mt-8">
           <h2 class="text-lg font-bold tracking-tight">Скиллы</h2>
-          <div class="mt-3">
-            <div
-              v-for="(g, i) in cv.skills"
-              :key="g.label"
-              class="py-2.5"
-              :class="i > 0 ? 'border-t border-dashed border-border' : ''"
-            >
-              <p class="text-sm">
-                <span class="font-medium">{{ g.label }}:</span>
-                <span class="text-muted"> {{ g.items.join(', ') }}</span>
-              </p>
-            </div>
-
-            <Transition name="expand">
-              <div v-if="expanded">
-                <div
-                  v-for="g in cv.extraSkills"
-                  :key="g.label"
-                  class="border-t border-dashed border-border py-2.5"
-                >
-                  <p class="text-sm">
-                    <span class="font-medium">{{ g.label }}:</span>
-                    <span class="text-muted"> {{ g.items.join(', ') }}</span>
-                  </p>
-                </div>
+          <div class="mt-4 space-y-4">
+            <section v-for="g in cv.skills" :key="g.label">
+              <h3 class="text-sm font-semibold">{{ g.label }}</h3>
+              <div class="mt-2 flex flex-wrap gap-1">
+                <span v-for="item in g.items" :key="item" class="tag">{{ item }}</span>
               </div>
-            </Transition>
+            </section>
           </div>
-
-          <button
-            type="button"
-            class="mt-4 w-full rounded-xl border border-border px-4 py-2.5 text-sm font-medium transition-all hover:border-[var(--accent-to)] hover:bg-card"
-            @click="expanded = !expanded"
-          >
-            {{ expanded ? 'Свернуть список' : 'Показать расширенный список технологий' }}
-          </button>
         </div>
       </div>
     </aside>
   </div>
 </template>
 
-<style scoped>
-.expand-enter-active,
-.expand-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.expand-enter-from,
-.expand-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-</style>

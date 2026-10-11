@@ -38,3 +38,6 @@ Thumbs.db
 *.tsbuildinfo
 coverage/
 .eslintcache
+
+# Приватные данные резюме (подхватываются сборкой, но не публикуются)
+private/

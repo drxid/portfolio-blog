@@ -22,7 +22,7 @@ const formattedDate = computed(() => formatDate(props.article.date))
     </p>
     <div class="mt-3 flex items-center justify-between gap-4">
       <span class="read-link">
-        Читать <span class="arrow">→</span>
+        Читать <Icon name="ph:arrow-right" class="arrow" />
       </span>
       <time :datetime="article.date" class="shrink-0 text-sm text-muted">{{ formattedDate }}</time>
     </div>

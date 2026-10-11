@@ -70,8 +70,13 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/cv', '/articles', '/checklist', '/privacy', '/sitemap.xml'],
+      routes: ['/', '/projects', '/cv', '/articles', '/checklist', '/privacy', '/sitemap.xml'],
     },
+  },
+
+  // /cv доступна только по прямой ссылке: noindex и без записи в sitemap
+  routeRules: {
+    '/cv': { robots: false },
   },
 
   icon: {
@@ -81,6 +86,7 @@ export default defineNuxtConfig({
   sitemap: {
     // crawler пройдёт по статьям; явно указываем известные статические маршруты
     autoLastmod: true,
+    exclude: ['/cv'],
   },
   robots: {
     allow: '/',

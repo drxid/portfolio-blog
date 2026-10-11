@@ -41,7 +41,11 @@ const results = computed(() => {
       <p class="mt-1.5 text-muted">Заметки и разборы — то, что хочется зафиксировать.</p>
     </header>
 
-    <div class="anim mt-8" style="animation-delay: 80ms">
+    <p v-if="!articles?.length" class="anim mt-10 text-muted" style="animation-delay: 80ms">
+      Статей пока нет — скоро здесь появятся первые заметки.
+    </p>
+
+    <div v-if="articles?.length" class="anim mt-8" style="animation-delay: 80ms">
       <label class="mb-2 block text-sm text-muted">Поиск</label>
       <SearchInput v-model="query" placeholder="Введите что-то…" />
     </div>
@@ -55,7 +59,7 @@ const results = computed(() => {
       <ArticleCard v-for="a in results" :key="a.path" :article="a" />
     </TransitionGroup>
 
-    <p v-else class="mt-10 text-muted">
+    <p v-else-if="articles?.length" class="mt-10 text-muted">
       Ничего не нашлось по запросу «{{ query }}».
     </p>
   </div>

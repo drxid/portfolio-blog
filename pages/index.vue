@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { PROJECTS } from '~/utils/projects'
+
 const cv = useCvData()
 
-// На главной — отдельный краткий текст «О себе» (резюме-вариант живёт на /cv)
+// На главной — отдельный краткий текст «О себе»
 const aboutHome = [
   'Привет! Я фуллстек JS-разработчик. Делаю быстрые и аккуратные веб-приложения на Vue 3 / Nuxt, проектирую API на Node.js.',
   'Люблю минимализм в интерфейсах, чистый код и доведение продукта до состояния, в котором им приятно пользоваться.',
@@ -33,9 +35,6 @@ const { data: latest } = await useAsyncData('home-latest', () =>
         <p v-for="(p, i) in aboutHome" :key="i">{{ p }}</p>
       </div>
       <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
-        <NuxtLink to="/cv" class="read-link font-medium text-fg">
-          Полное резюме <span class="arrow">→</span>
-        </NuxtLink>
         <CopyEmail :email="cv.email" />
       </div>
     </section>
@@ -46,12 +45,25 @@ const { data: latest } = await useAsyncData('home-latest', () =>
       <SkillTags class="mt-4" />
     </section>
 
-    <!-- Последние статьи -->
+    <!-- Проекты -->
     <section class="anim mt-14" style="animation-delay: 120ms">
+      <div class="flex items-end justify-between">
+        <h2 class="text-lg font-bold tracking-tight">Проекты</h2>
+        <NuxtLink to="/projects" class="nav-link text-sm">
+          Все проекты<Icon name="ph:arrow-up-right-bold" class="arrow" />
+        </NuxtLink>
+      </div>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ProjectCard v-for="p in PROJECTS" :key="p.slug" :project="p" />
+      </div>
+    </section>
+
+    <!-- Последние статьи -->
+    <section v-if="latest?.length" class="anim mt-14" style="animation-delay: 140ms">
       <div class="flex items-end justify-between">
         <h2 class="text-lg font-bold tracking-tight">Последние статьи</h2>
         <NuxtLink to="/articles" class="nav-link text-sm">
-          Все статьи<span class="arrow">↗</span>
+          Все статьи<Icon name="ph:arrow-up-right-bold" class="arrow" />
         </NuxtLink>
       </div>
       <div class="mt-6 space-y-8">
@@ -67,7 +79,7 @@ const { data: latest } = await useAsyncData('home-latest', () =>
       >
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-bold">Статьи</h3>
-          <span class="arrow text-muted transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">↗</span>
+          <Icon name="ph:arrow-up-right" class="arrow h-5 w-5 text-muted transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </div>
         <p class="mt-2 text-sm text-muted">Заметки и разборы — то, что хочется зафиксировать.</p>
       </NuxtLink>
@@ -78,7 +90,7 @@ const { data: latest } = await useAsyncData('home-latest', () =>
       >
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-bold">Чеклист</h3>
-          <span class="arrow text-muted transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">↗</span>
+          <Icon name="ph:arrow-up-right" class="arrow h-5 w-5 text-muted transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </div>
         <p class="mt-2 text-sm text-muted">Список того, что хочу изучить, прочитать и посмотреть.</p>
       </NuxtLink>
