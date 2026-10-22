@@ -1,0 +1,69 @@
+# Автодеплой drxid.ru: пуш в main (или ручной запуск) → nuxt generate → статика на VPS Джино.
+# Выкладка атомарная: распаковка в /var/www/drxid.new и подмена /var/www/drxid (прошлая версия — drxid.old).
+# Секреты: DRXID_SSH_KEY, DRXID_KNOWN_HOSTS, DRXID_HOST, DRXID_SSH_PORT,
+# PRIVATE_EXPERIENCE_TS — base64 файла private/experience.ts (он в .gitignore, но нужен сборке /cv).
+# Выключается переменной репозитория DEPLOY_ENABLED.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-drxid
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NUXT_DEVTOOLS: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.32.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Приватный опыт для /cv
+        env:
+          PRIVATE_EXPERIENCE_TS: ${{ secrets.PRIVATE_EXPERIENCE_TS }}
+        run: |
+          mkdir -p private
+          printf '%s' "$PRIVATE_EXPERIENCE_TS" | base64 -d > private/experience.ts
+
+      - run: pnpm generate
+
+      - name: SSH-ключ деплоя
+        env:
+          SSH_KEY: ${{ secrets.DRXID_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DRXID_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Выкладка
+        env:
+          HOST: ${{ secrets.DRXID_HOST }}
+          PORT: ${{ secrets.DRXID_SSH_PORT }}
+        run: |
+          tar -czf site.tgz -C .output/public .
+          scp -P "$PORT" site.tgz "root@$HOST:/tmp/site.tgz"
+          ssh -p "$PORT" "root@$HOST" 'set -e
+            rm -rf /var/www/drxid.new && mkdir /var/www/drxid.new
+            tar -xzf /tmp/site.tgz --no-same-owner -C /var/www/drxid.new
+            rm -rf /var/www/drxid.old
+            mv /var/www/drxid /var/www/drxid.old
+            mv /var/www/drxid.new /var/www/drxid
+            rm /tmp/site.tgz'
+
+      - name: Проверка
+        run: curl -fsSI https://drxid.ru/ | grep -i '^last-modified'
