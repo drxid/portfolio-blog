@@ -3,9 +3,9 @@ import { PROJECTS, SMALL_PROJECTS } from '~/utils/projects'
 
 useSeoMeta({
   title: 'Проекты',
-  description: 'Проекты Вадима Бухлова: Bezuglya, Playloop, BGGridDB, VPNkit и небольшие утилиты.',
+  description: 'Проекты Вадима Бухлова: Playloop, Bezuglya, BGGridDB и небольшие проекты.',
   ogTitle: 'Проекты — Вадим Бухлов',
-  ogDescription: 'Проекты Вадима Бухлова: Bezuglya, Playloop, BGGridDB, VPNkit и небольшие утилиты.',
+  ogDescription: 'Проекты Вадима Бухлова: Playloop, Bezuglya, BGGridDB и небольшие проекты.',
 })
 </script>
 

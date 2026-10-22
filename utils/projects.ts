@@ -13,15 +13,6 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
-    slug: 'bezuglya',
-    title: 'Bezuglya',
-    description:
-      'Независимое сообщество владельцев электронных чаш для кальяна: лента в духе Reddit с голосами и комментариями деревом, гайды как документация и вопросы с принятым ответом — отдельно по каждому девайсу. PWA с push-уведомлениями.',
-    icon: 'ph:wind-duotone',
-    stack: ['Nuxt', 'PostgreSQL', 'Drizzle', 'Redis', 'Tiptap', 'PWA'],
-    url: 'https://bezuglya.ru',
-  },
-  {
     slug: 'playloop',
     title: 'Playloop',
     description:
@@ -29,6 +20,15 @@ export const PROJECTS: Project[] = [
     icon: 'ph:headphones-duotone',
     stack: ['Vue 3', 'Pinia', 'Vite', 'Tailwind', 'Howler'],
     url: 'https://playloop.ru',
+  },
+  {
+    slug: 'bezuglya',
+    title: 'Bezuglya',
+    description:
+      'Независимое сообщество владельцев электронных чаш для кальяна: лента в духе Reddit с голосами и комментариями деревом, гайды как документация и вопросы с принятым ответом — отдельно по каждому девайсу. PWA с push-уведомлениями.',
+    icon: 'ph:wind-duotone',
+    stack: ['Nuxt', 'PostgreSQL', 'Drizzle', 'Redis', 'Tiptap', 'PWA'],
+    url: 'https://bezuglya.ru',
   },
   {
     slug: 'bggriddb',
@@ -39,18 +39,17 @@ export const PROJECTS: Project[] = [
     stack: ['Nuxt', 'PostgreSQL', 'Drizzle', 'Redis', 'S3'],
     url: 'https://bggriddb.ru',
   },
+]
+
+export const SMALL_PROJECTS: Project[] = [
   {
     slug: 'vpnkit',
     title: 'VPNkit',
-    description:
-      'Личный кабинет самодельного VPN: доступы на устройства с пошаговой настройкой, новости и поддержка, плюс админка для управления пользователями и серверами.',
+    description: 'Личный кабинет самодельного VPN: доступы на устройства с пошаговой настройкой, новости и поддержка, плюс админка для управления пользователями и серверами.',
     icon: 'ph:shield-check-duotone',
     stack: ['Nuxt', 'PostgreSQL', 'Drizzle', 'Redis', 'Web Push'],
     url: 'https://vpnkit.ru',
   },
-]
-
-export const SMALL_PROJECTS: Project[] = [
   {
     slug: 'prud100',
     title: 'Сотый пруд',
