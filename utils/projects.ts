@@ -13,6 +13,15 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
+    slug: 'bezuglya',
+    title: 'Bezuglya',
+    description:
+      'Независимое сообщество владельцев электронных чаш для кальяна: лента в духе Reddit с голосами и комментариями деревом, гайды как документация и вопросы с принятым ответом — отдельно по каждому девайсу. PWA с push-уведомлениями.',
+    icon: 'ph:wind-duotone',
+    stack: ['Nuxt', 'PostgreSQL', 'Drizzle', 'Redis', 'Tiptap', 'PWA'],
+    url: 'https://bezuglya.ru',
+  },
+  {
     slug: 'playloop',
     title: 'Playloop',
     description:
