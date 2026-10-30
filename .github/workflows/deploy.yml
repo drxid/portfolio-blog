@@ -1,7 +1,8 @@
 # Автодеплой drxid.ru: пуш в main (или ручной запуск) → nuxt generate → статика на VPS Джино.
 # Выкладка атомарная: распаковка в /var/www/drxid.new и подмена /var/www/drxid (прошлая версия — drxid.old).
 # Секреты: DRXID_SSH_KEY, DRXID_KNOWN_HOSTS, DRXID_HOST, DRXID_SSH_PORT,
-# PRIVATE_EXPERIENCE_TS — base64 файла private/experience.ts (он в .gitignore, но нужен сборке /cv).
+# PRIVATE_CV_TS, PRIVATE_EXPERIENCE_TS — base64 файлов private/cv.ts и private/experience.ts
+# (они в .gitignore, но нужны сборке /cv).
 # Выключается переменной репозитория DEPLOY_ENABLED.
 name: Deploy
 
@@ -32,12 +33,15 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      - name: Приватный опыт для /cv
+      - name: Приватные данные для /cv
         env:
+          PRIVATE_CV_TS: ${{ secrets.PRIVATE_CV_TS }}
           PRIVATE_EXPERIENCE_TS: ${{ secrets.PRIVATE_EXPERIENCE_TS }}
         run: |
           mkdir -p private
+          printf '%s' "$PRIVATE_CV_TS" | base64 -d > private/cv.ts
           printf '%s' "$PRIVATE_EXPERIENCE_TS" | base64 -d > private/experience.ts
+          test -s private/cv.ts && test -s private/experience.ts
 
       - run: pnpm generate
 

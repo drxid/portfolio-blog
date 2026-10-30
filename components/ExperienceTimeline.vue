@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const cv = useCvData()
+import type { CvExperience } from '~/composables/useCvData'
+
+const props = defineProps<{ experience: CvExperience[] }>()
 
 // Месяцы считаем как целые индексы: год * 12 + (месяц − 1)
 function toMonth(ym: string) {
@@ -33,7 +35,7 @@ function duration(months: number) {
 
 // Порядок как в резюме: текущие места работы сверху, от нового к старому
 const rows = computed(() =>
-  cv.experience.map((exp) => {
+  props.experience.map((exp) => {
     const from = toMonth(exp.start)
     // Конец включительно: полоса доходит до конца последнего месяца
     const to = (exp.end ? toMonth(exp.end) : now.value) + 1

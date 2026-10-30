@@ -74,7 +74,7 @@ export default defineNuxtConfig({
     },
   },
 
-  // /cv доступна только по прямой ссылке: noindex и без записи в sitemap
+  // /cv закрыта паролем в nginx на сервере: noindex и без записи в sitemap
   routeRules: {
     '/cv': { robots: false },
   },

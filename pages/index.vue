@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PROJECTS } from '~/utils/projects'
 
-const cv = useCvData()
+const cv = cvContacts
 
 // На главной — отдельный краткий текст «О себе»
 const aboutHome = [

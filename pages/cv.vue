@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ wide: true })
 
-const cv = useCvData()
+const cv = await useCvData()
 const { generate, generating } = useGenerateCvPdf()
 
 useSeoMeta({
@@ -44,7 +44,7 @@ async function download() {
       <!-- Опыт работы -->
       <section class="anim mt-12" style="animation-delay: 80ms">
         <h2 class="text-2xl font-bold tracking-tight">Опыт работы</h2>
-        <ExperienceTimeline class="mt-4 rounded-2xl border border-border p-5" />
+        <ExperienceTimeline :experience="cv.experience" class="mt-4 rounded-2xl border border-border p-5" />
         <div class="mt-8 space-y-4">
           <template v-for="(exp, i) in cv.experience" :key="i">
             <div
